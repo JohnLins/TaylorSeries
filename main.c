@@ -31,24 +31,34 @@ void print_dual(Dual a){
   printf("%lf + %lf ♤\n", a.real, a.dual);
 }
 
-double f(double x){
-  return x;
-}
-//=
 Dual fd(Dual a){
     //return dual_sin(dual_mult(a, a));
-    return dual_mult((Dual){20,1}, dual_sin(dual_mult((Dual){.05,1}, a)));
+    return dual_mult((Dual){20,1}, dual_sin(dual_mult((Dual){.02,1}, a)));
+}
+
+double first_derivative(Dual (*f)(Dual), double x){
+    return (*f)((Dual){x,1}).dual;
+}
+
+double higher_derivative(Dual (*f)(Dual), double x, int n) {
+    
+    double h = .00001;
+    
+   return  ((*f)((Dual){x + h,1}).real - n*((*f)((Dual){x,1}).real) + (*f)((Dual){x-h,1}).real)/powf(h,n);
+    
+    
 }
 
 //pass function pointer
-double taylor(double a, double x, int iteration){
+double taylor(double a, double x, int iteration, Dual (*f)(Dual)){
     double y = 0;
-    int factorial = 1;
+    long long int unsigned  factorial = 1;
     for(int i = 1; i < iteration; i++){
+        double derivative = higher_derivative(f,a,i);//(*f)((Dual){a,1}).dual;
+        //^You are not taking higher order derivates!!
+        y += (derivative / factorial) * powf(x - a, i-1);
         
-        y += fd((Dual){a,1}).dual / factorial * powf(x - a, i-1);
-        
-        
+        printf("::: %f\n", derivative);
         factorial *= i;
     }
     
@@ -58,13 +68,6 @@ double taylor(double a, double x, int iteration){
 int main()
 {
  
-
-    for(int i = 0; i < 10; i++){
-        printf("Derivative @ x = %d: %lf, Real: %lf\n", i, fd((Dual){i,1}).dual, fd((Dual){i,1}).real);
-    }
-
-
-
 
 
 
@@ -84,13 +87,14 @@ int main()
             DrawLine(0, SH/2, SW, SH/2, BLACK);
 
             for(int i = -SW/2; i < SW/2; i++){
-                DrawCircle(i + SW/2, fd((Dual){i,1}).real + SH/2, 1, BLUE);
-                DrawCircle(i + SW/2, taylor(0, i, (int)num_of_it) + SH/2, 1, RED);
+                DrawCircle(i + SW/2, fd((Dual){i,1}).real + SH/2, 2, BLUE);
+                DrawCircle(i + SW/2, taylor(0, i, (int)num_of_it, &fd) + SH/2, 2, RED);
+                //printf("::: %f", taylor(0, i, (int)num_of_it));
             }//fd((Dual){i/SW * STEP, 1}).real
             
             DrawText(TextFormat("%d", (int)num_of_it), 20, 20, 15, BLACK);
             
-            num_of_it += .01;
+            num_of_it += .1;
 
         EndDrawing();
        
