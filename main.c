@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h> 
-//#include "raylib.h"
+#include "raylib.h"
 
 //Hackathon: https://ypstemhackathon2022.devpost.com/?ref_feature=challenge&ref_medium=discover
 
@@ -139,8 +139,9 @@ double first(double (*f)(double), double x){
 }
 */
 
+//FAILS AFTER 3rd derivative
 double higher(double (*f)(double), double x, double n){
-  double h = .000001;
+  const long double h = .001;
 
   int *fibs = (int*)malloc((n + 1) * sizeof(int));
   fib(fibs, n+1);
@@ -152,7 +153,7 @@ double higher(double (*f)(double), double x, double n){
 
   }
 
-  free(&fibs);
+  //free(&fibs);
 
   return numer / (pow(h, n));
 }
@@ -166,7 +167,7 @@ double taylor(double a, double x, int iteration, double (*f)(double)){
         //^You are not taking higher order derivates!!
         y += (derivative / factorial) * powf(x - a, i-1);
         
-        printf("::: %f\n", derivative);
+       // printf("::: %f\n", derivative);
         factorial *= i;
     }
     
@@ -174,11 +175,11 @@ double taylor(double a, double x, int iteration, double (*f)(double)){
 }
 
 double func(double x){
-  return 30 * sinf(.02*x);
+  return 10*atan(x);//return 30 * sinf(.02*x);
 }
 
 double test(double x){
-    return cosf(x);
+    return 10*atan(x);
 }
 
 
@@ -186,12 +187,13 @@ int main()
 {
  
 
-printf("df = %f\n", higher(&test, 0, 0));
-printf("df = %f\n", higher(&test, 0, 1));
-printf("df = %f\n", higher(&test, 0, 2));
-printf("df = %f\n", higher(&test, 0, 3));
-printf("df = %f\n", higher(&test, 0, 4));
-/*
+printf("df = %f\n", higher(&test, 1, 0));
+printf("df = %f\n", higher(&test, 1, 1));
+printf("df = %f\n", higher(&test, 1, 2));
+printf("df = %f\n", higher(&test, 1, 3));
+printf("df = %f\n", higher(&test, 1, 4));
+printf("df = %f\n", higher(&test, 1, 5));
+
     InitWindow(SW, SH, "Taylor Series Sim | John Lins");
 
     double num_of_it = 1;
@@ -215,14 +217,14 @@ printf("df = %f\n", higher(&test, 0, 4));
             
             DrawText(TextFormat("%d", (int)num_of_it), 20, 20, 15, BLACK);
             
-            num_of_it += .1;
+            num_of_it += .09;
 
         EndDrawing();
        
     }
 
  
-    CloseWindow();   */
+    CloseWindow();   
 
   return 0;
 }
