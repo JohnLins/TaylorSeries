@@ -37,7 +37,7 @@ double f(double x){
 //=
 Dual fd(Dual a){
     //return dual_sin(dual_mult(a, a));
-    return dual_sin(a);
+    return dual_mult((Dual){20,1}, dual_sin(dual_mult((Dual){.05,1}, a)));
 }
 
 //pass function pointer
@@ -79,13 +79,16 @@ int main()
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
+            
+            DrawLine(SW/2, 0, SW/2, SH, BLACK);
+            DrawLine(0, SH/2, SW, SH/2, BLACK);
 
             for(int i = -SW/2; i < SW/2; i++){
                 DrawCircle(i + SW/2, fd((Dual){i,1}).real + SH/2, 1, BLUE);
                 DrawCircle(i + SW/2, taylor(0, i, (int)num_of_it) + SH/2, 1, RED);
             }//fd((Dual){i/SW * STEP, 1}).real
             
-            
+            DrawText(TextFormat("%d", (int)num_of_it), 20, 20, 15, BLACK);
             
             num_of_it += .01;
 
