@@ -7,57 +7,7 @@
 
 #define SW 1000
 #define SH 800
-#define e 2.7
-/*
-typedef struct Dual {
-  double real;
-  double dual;
-} Dual;
-
-
-Dual dual_add(Dual a, Dual b){
-  return (Dual){a.real + b.real, a.dual + b.dual};
-}
-
-Dual dual_mult(Dual a, Dual b){
-  return (Dual){ a.real * b.real,
-   a.real * b.dual + a.dual * b.real};
-}
-
-Dual dual_sin(Dual a){
-    return (Dual){sin(a.real), a.dual * cos(a.real)};
-}
-
-void print_dual(Dual a){
-  printf("%lf + %lf ♤\n", a.real, a.dual);
-}
-
-Dual fd(Dual a){
-    //return dual_sin(dual_mult(a, a));
-    return dual_mult((Dual){20,1}, dual_sin(dual_mult((Dual){.02,1}, a)));
-}
-
-double first_derivative(Dual (*f)(Dual), double x){
-    return (*f)((Dual){x,1}).dual;
-}
-
-
-
-Dual dd(Dual (*f)(Dual), double x){
-  Dual v = (*f)((Dual){x,1});
-  return (Dual){ v,real, v.dual};
-}
-*/
-
-/*double higher_derivative(Dual (*f)(Dual), double x, int n) {
-    
-    double h = .00001;
-    
-   return  ((*f)((Dual){x + h,1}).real - n*((*f)((Dual){x,1}).real) + (*f)((Dual){x-h,1}).real)/powf(h,n);
-    
-    
-}*/
-
+#define e 2.71828
 
 void fib(int *fibs, int len){
     
@@ -77,9 +27,6 @@ void fib(int *fibs, int len){
                 hold[len/2 - j] = fibs[len/2 - 1 + j] + fibs[len/2 + j];
                 
             }
-            ////printf
-              //  printf("HOLD(%d): ",i);for(int k = 0; k < len+1; k++){ printf("%d ", hold[k]);} printf("\n");
-                ////
         } else {
         
             for(int j = 0; j <= i/2; j++){
@@ -87,18 +34,11 @@ void fib(int *fibs, int len){
                 fibs[len/2 + j] = hold[len/2 + j] + hold[len/2 + 1 + j];
                 
             }
-           // printf("FIB (%d): ",i);PP(fibs, len);
-        }
-        
-       
-        
+        }   
     }
     
-
   } else {//odd
   
-    
-
       for(int i = 0; i < len - 2; i++){
         
         if(i % 2 == 0){
@@ -109,9 +49,6 @@ void fib(int *fibs, int len){
                 fibs[len/2 - j] = hold[len/2 - 1 + j] + hold[len/2 + j];
                 
             }
-            ////printf
-              //  printf("HOLD(%d): ",i);for(int k = 0; k < len+1; k++){ printf("%d ", hold[k]);} printf("\n");
-                ////
         } else {
         
             for(int j = 0; j <= i/2; j++){
@@ -119,27 +56,11 @@ void fib(int *fibs, int len){
                 hold[len/2 + j] = fibs[len/2 + j] + fibs[len/2 + 1 + j];
                 
             }
-           // printf("FIB (%d): ",i);PP(fibs, len);
         }
-        
-       
-        
     }
- 
   }
-  
 }
 
-/*
-double first(double (*f)(double), double x){
-  double h = .000001;
-
-  return   ((*f)(x+h) - (*f)(x))/h;
-
-}
-*/
-
-//FAILS AFTER 3rd derivative
 double higher(double (*f)(double), double x, double n){
   const long double h = .00001;
 
@@ -153,8 +74,6 @@ double higher(double (*f)(double), double x, double n){
 
   }
 
-  //free(&fibs);
-
   return numer / (pow(h, n));
 }
 
@@ -163,35 +82,32 @@ double taylor(double a, double x, int iteration, double (*f)(double)){
     double y = 0;
     long long int unsigned  factorial = 1;
     for(int i = 1; i < iteration; i++){
-        double derivative = higher(f,a,i);//(*f)((Dual){a,1}).dual;
-        //^You are not taking higher order derivates!!
+        double derivative = higher(f,a,i);
         y += (derivative / factorial) * powf(x - a, i-1);
         
-       // printf("::: %f\n", derivative);
         factorial *= i;
     }
     
     return y;
 }
 
-double func(double x){
-  return 70/tan(x/70);
-}
 
-double test(double x){
-    return 10*atan(x);
-}
+double f1(double x) {return 70/tan(x/70);}
+double f4(double x) {return e*e*cos(x/20);}
+double f3(double x) {return sinh(x/50);}
+double f2(double x) {return 30*powf(e, cos(x/30));}
+
 
 
 int main()
 {
  
-
-
-
     InitWindow(SW, SH, "Higher-Order Derivative Sim | John Lins");
+    
+    double (*funcs[3])(double x) = {&f1, &f2, &f3};
 
    double num_of_it = 1;
+   int index_of_func = 0;
 
     SetTargetFPS(60);              
     while (!WindowShouldClose())    
@@ -205,18 +121,25 @@ int main()
             DrawLine(0, SH/2, SW, SH/2, BLACK);
 
             for(int i = -SW/2; i < SW/2; i++){
-                DrawCircle(i + SW/2, func(i)+ SH/2, 2, GREEN);
+                DrawCircle(i + SW/2, (*funcs[index_of_func])(i)+ SH/2, 2, GREEN);
                 
                 for(int j = 1; j < (int)num_of_it; j++){
-                   // DrawCircle(i + SW/2, taylor(0, i, (int)num_of_it, &func) + SH/2, 2, RED);
-                    DrawCircle(i + SW/2, 10*higher(&func, i, j) + SH/2, 2, (Color){0, 0, 250 - (100*j), 250 - (100*j)});
+                    DrawCircle(i + SW/2, 10*higher(funcs[index_of_func], i, j) + SH/2, 2, (Color){0, 0, 250 - (50*j), 250 - (10*j)});
                 }
-                //printf("::: %f", taylor(0, i, (int)num_of_it));
-            }//fd((Dual){i/SW * STEP, 1}).real
+                
+            }
             
-           DrawText(TextFormat("%dth derivative of f(x)", (int)num_of_it), 20, 20, 25, BLACK);
+           DrawText(TextFormat("nth (n = %d) derivative of f(x)", (int)num_of_it), 20, 20, 25, BLACK);
+           DrawText("y", SW/2 + 5, 5, 20, BLACK);
+           DrawText("x", SW - 15, SH/2 + 5, 20, BLACK);
             
-          num_of_it += .05;
+          num_of_it += .02;
+            
+            if(num_of_it > 5){ index_of_func ++; num_of_it = 0;}
+            if(index_of_func > 3){CloseWindow(); return 0;}
+            
+            
+            
 
         EndDrawing();
        
