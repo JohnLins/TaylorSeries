@@ -7,7 +7,7 @@
 
 #define SW 1000
 #define SH 800
-#define STEP 10
+#define e 2.7
 /*
 typedef struct Dual {
   double real;
@@ -141,7 +141,7 @@ double first(double (*f)(double), double x){
 
 //FAILS AFTER 3rd derivative
 double higher(double (*f)(double), double x, double n){
-  const long double h = .001;
+  const long double h = .00001;
 
   int *fibs = (int*)malloc((n + 1) * sizeof(int));
   fib(fibs, n+1);
@@ -175,7 +175,7 @@ double taylor(double a, double x, int iteration, double (*f)(double)){
 }
 
 double func(double x){
-  return 10*atan(x);//return 30 * sinf(.02*x);
+  return 70/tan(x/70);
 }
 
 double test(double x){
@@ -187,16 +187,11 @@ int main()
 {
  
 
-printf("df = %f\n", higher(&test, 1, 0));
-printf("df = %f\n", higher(&test, 1, 1));
-printf("df = %f\n", higher(&test, 1, 2));
-printf("df = %f\n", higher(&test, 1, 3));
-printf("df = %f\n", higher(&test, 1, 4));
-printf("df = %f\n", higher(&test, 1, 5));
 
-    InitWindow(SW, SH, "Taylor Series Sim | John Lins");
 
-    double num_of_it = 1;
+    InitWindow(SW, SH, "Higher-Order Derivative Sim | John Lins");
+
+   double num_of_it = 1;
 
     SetTargetFPS(60);              
     while (!WindowShouldClose())    
@@ -210,14 +205,18 @@ printf("df = %f\n", higher(&test, 1, 5));
             DrawLine(0, SH/2, SW, SH/2, BLACK);
 
             for(int i = -SW/2; i < SW/2; i++){
-                DrawCircle(i + SW/2, func(i)+ SH/2, 2, BLUE);
-                DrawCircle(i + SW/2, taylor(0, i, (int)num_of_it, &func) + SH/2, 2, RED);
+                DrawCircle(i + SW/2, func(i)+ SH/2, 2, GREEN);
+                
+                for(int j = 1; j < (int)num_of_it; j++){
+                   // DrawCircle(i + SW/2, taylor(0, i, (int)num_of_it, &func) + SH/2, 2, RED);
+                    DrawCircle(i + SW/2, 10*higher(&func, i, j) + SH/2, 2, (Color){0, 0, 250 - (100*j), 250 - (100*j)});
+                }
                 //printf("::: %f", taylor(0, i, (int)num_of_it));
             }//fd((Dual){i/SW * STEP, 1}).real
             
-            DrawText(TextFormat("%d", (int)num_of_it), 20, 20, 15, BLACK);
+           DrawText(TextFormat("%dth derivative of f(x)", (int)num_of_it), 20, 20, 25, BLACK);
             
-            num_of_it += .09;
+          num_of_it += .05;
 
         EndDrawing();
        
