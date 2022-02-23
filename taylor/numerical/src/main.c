@@ -2,8 +2,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include "raylib.h"
+#include "../../../fib/fib.c"
 
-//Hackathon: https://ypstemhackathon2022.devpost.com/?ref_feature=challenge&ref_medium=discover
 
 #define SW 1000
 #define SH 800
@@ -33,61 +33,6 @@ void print_dual(Dual a){
 }
 
 */
-void fib(int * fibs, int len) {
-
-    //init
-    int hold[len + 1];
-    for (int i = 0; i < len; i++) {
-        fibs[i] = 1;
-        hold[i] = 1;
-    }
-    hold[len] = 1;
-
-
-    if (len % 2 == 0) { //even
-        for (int i = 0; i < len - 2; i++) {
-
-            if (i % 2 == 0) {
-
-                for (int j = 0; j <= i / 2; j++) {
-
-                    hold[len / 2 + j] = fibs[len / 2 - 1 + j] + fibs[len / 2 + j];
-                    hold[len / 2 - j] = fibs[len / 2 - 1 + j] + fibs[len / 2 + j];
-
-                }
-            } else {
-
-                for (int j = 0; j <= i / 2; j++) {
-                    fibs[len / 2 - 1 - j] = hold[len / 2 + j] + hold[len / 2 + 1 + j];
-                    fibs[len / 2 + j] = hold[len / 2 + j] + hold[len / 2 + 1 + j];
-
-                }
-            }
-        }
-
-    } else { //odd
-
-        for (int i = 0; i < len - 2; i++) {
-
-            if (i % 2 == 0) {
-
-                for (int j = 0; j <= i / 2; j++) {
-
-                    fibs[len / 2 + j] = hold[len / 2 - 1 + j] + hold[len / 2 + j];
-                    fibs[len / 2 - j] = hold[len / 2 - 1 + j] + hold[len / 2 + j];
-
-                }
-            } else {
-
-                for (int j = 0; j <= i / 2; j++) {
-                    hold[len / 2 - 1 - j] = fibs[len / 2 + j] + fibs[len / 2 + 1 + j];
-                    hold[len / 2 + j] = fibs[len / 2 + j] + fibs[len / 2 + 1 + j];
-
-                }
-            }
-        }
-    }
-}
 
 double higher(double( * f)(double), double x, double n) {
     const long double h = .0001;
